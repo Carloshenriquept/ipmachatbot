@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPMA Chat</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #e0f2e9;
+        }
+        .chat-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-header {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        .chat-box {
+            width: 100%;
+            max-width: 500px;
+            height: 60%;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .user-message {
+            background-color: #c8e6c9;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #e0e0e0;
+            align-self: flex-start;
+        }
+        .options {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .option-button {
+            background-color: #2e7d32;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .typing-indicator {
+            width: 50px;
+            height: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .typing-indicator div {
+            width: 8px;
+            height: 8px;
+            background-color: #999;
+            border-radius: 50%;
+            animation: typing 1s infinite;
+        }
+        .typing-indicator div:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator div:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+        .thank-you {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        .thank-you img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .thank-you p {
+            font-size: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">IPMA Chat</div>
+        <div class="chat-box" id="chat-box">
+            <!-- Mensagens aparecerão aqui -->
+        </div>
+        <div class="options">
+            <button class="option-button" onclick="userQuestion(this, 'Quanto custa as ecobags?', 'Custa a partir de 20 reais.')">Quanto custa as ecobags?</button>
+            <button class="option-button" onclick="userQuestion(this, 'Qual é o valor do frete?', 'Depende da distância da sua residência até a loja onde a ecobag vai sair, etc.')">Qual é o valor do frete?</button>
+            <button class="option-button" onclick="userQuestion(this, 'Qual o meio de contato?', 'Temos dois meios de contato: o perfil do Instagram @ipmabrasil e o email ipmabrasil.contato@gmail.com.')">Qual o meio de contato?</button>
+            <button class="option-button" onclick="userQuestion(this, 'Qual é o prazo de entrega?', 'O prazo de entrega é de 5 a 10 dias úteis.')">Qual é o prazo de entrega?</button>
+        </div>
+        <div class="thank-you" id="thank-you">
+            <img src="https://drive.google.com/uc?id=138DBH0O11rPZU7MYShZpHB4Z0xFkO6X-" alt="Logo IPMA">
+            <p>Obrigado por utilizar. A IPMA Brasil agradece o contato.</p>
+        </div>
+    </div>
+
+    <script>
+        const answeredQuestions = new Set();
+
+        function userQuestion(button, question, answer) {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div class="message user-message">${question}</div>`;
+            button.disabled = true; // Desativa o botão atual
+            answeredQuestions.add(question);
+            showTypingIndicator(answer);
+        }
+
+        function showTypingIndicator(answer) {
+            const chatBox = document.getElementById('chat-box');
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('typing-indicator');
+            typingIndicator.innerHTML = '<div></div><div></div><div></div>';
+            chatBox.appendChild(typingIndicator);
+
+            setTimeout(() => {
+                chatBox.removeChild(typingIndicator);
+                chatBox.innerHTML += `<div class="message bot-message">${answer}</div>`;
+                
+                if (answeredQuestions.size === 4) { // Todas as perguntas respondidas
+                    setTimeout(showThankYou, 10000);  // Mostra agradecimento após 10 segundos
+                }
+            }, 2000);
+        }
+
+        function showThankYou() {
+            document.querySelector('.chat-container').style.display = 'none';
+            document.getElementById('thank-you').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
